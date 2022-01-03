@@ -15,7 +15,7 @@ target_sub = "climbing+bouldering+climbharder"
 subreddit = reddit.subreddit(target_sub)
 
 # RegEx
-re_V = "^[V,v]([1][0-9]|[0-9])\b"
+re_V = r"^[V,v]([1][0-9]|[0-9])\b"
 re_YDS = ""
 
 # for submission in subreddit.stream.submissions():
@@ -23,12 +23,12 @@ re_YDS = ""
 
 for comment in subreddit.stream.comments():
     # we don't want to convert comments we or MountainProjectBot made
-    if not comment.author == "MountainProjectBot" or "climb-grade-bot":
+    if comment.author != "MountainProjectBot" and comment.author != "climb-grade-bot":
         for word in comment.body.split():
             if re.search(re_V, word):  # check if the word is a V-grade
-                pass
+                v_to_french(word)
             elif re.search(re_YDS, word):  # check if the word is a YDS grade
-                pass
+                YDS_to_french(word)
 
 
 def v_to_french(grade):
