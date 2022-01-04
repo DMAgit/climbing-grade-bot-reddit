@@ -16,7 +16,7 @@ subreddit = reddit.subreddit(target_sub)
 
 # RegEx
 re_V = r"^[V,v]([1][0-9]|[0-9])\b"
-re_YDS = r""
+re_YDS = r"^5.([4-9][^a-z]|1[0-5][a-d]?[^e-z])"  # untested
 
 
 def v_to_font(grade):
