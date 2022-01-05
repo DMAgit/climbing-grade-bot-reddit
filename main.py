@@ -1,5 +1,5 @@
 import praw
-import config
+import config  # private info for the reddit API
 import re
 
 reddit = praw.Reddit(
@@ -26,49 +26,45 @@ def v_to_font(grade):
     :return converted_grade:
     """
 
-    # remove non-alphanumeric characters
-    grade = re.sub(r'[^a-zA-Z0-9]', '', grade)
-    grade = grade.lower()
-
-    if grade == "v0":
+    if grade == "V0":
         converted_grade = "4 or 4+"
-    elif grade == "v1":
+    elif grade == "V1":
         converted_grade = "5 or 5+"
-    elif grade == "v2":
+    elif grade == "V2":
         converted_grade = "6a"
-    elif grade == "v3":
+    elif grade == "V3":
         converted_grade = "6a+ or 6b"
-    elif grade == "v4":
+    elif grade == "V4":
         converted_grade = "6b+ or 6c"
-    elif grade == "v5":
+    elif grade == "V5":
         converted_grade = "6c or 6c+"
-    elif grade == "v6":
+    elif grade == "V6":
         converted_grade = "7a"
-    elif grade == "v7":
+    elif grade == "V7":
         converted_grade = "7a+"
-    elif grade == "v8":
+    elif grade == "V8":
         converted_grade = "7b or 7b+"
-    elif grade == "v9":
+    elif grade == "V9":
         converted_grade = "7b+ or 7c"
-    elif grade == "v10":
+    elif grade == "V10":
         converted_grade = "7c or 7c+"
-    elif grade == "v11":
+    elif grade == "V11":
         converted_grade = "7c+ or 8a"
-    elif grade == "v12":
+    elif grade == "V12":
         converted_grade = "8a or 8a+"
-    elif grade == "v13":
+    elif grade == "V13":
         converted_grade = "8a+ or 8b"
-    elif grade == "v14":
+    elif grade == "V14":
         converted_grade = "8b+"
-    elif grade == "v15":
+    elif grade == "V15":
         converted_grade = "8c"
-    elif grade == "v16":
+    elif grade == "V16":
         converted_grade = "8c+"
-    elif grade == "v17":
+    elif grade == "V17":
         converted_grade = "9a"
-    elif grade == "v18":
+    elif grade == "V18":
         converted_grade = "9a+ or 9b"
-    elif grade == "v19":
+    elif grade == "V19":
         converted_grade = "9b or 9b+"
 
     else:
@@ -83,9 +79,6 @@ def YDS_to_french(grade):
     :param grade: String
     :return converted_grade:
     """
-
-    grade = re.sub(r"^\W+|\W+$", "", grade)
-    grade = grade.lower()
 
     if grade == "5.4":
         converted_grade = "4a"
@@ -154,20 +147,27 @@ def YDS_to_french(grade):
     return converted_grade
 
 
+def build_comment(grade, converted_grade):
+    return f"A **{grade}** is a(n) **{converted_grade}**.\n\n"
+
+
 # for submission in subreddit.stream.submissions():
 #     print(submission.title)
 
 for comment in subreddit.stream.comments():
     # we don't want to convert comments we or MountainProjectBot made
     if comment.author != "MountainProjectBot" and comment.author != "climb-grade-bot":
-        for word in comment.body.split():
-            word_list = word.split("/")  # sometimes people will write grade1/grade2
+        for string in comment.body.split():
+            word_list = string.split("/")  # sometimes people will write grade1/grade2
             # this would be passed as one word and get through the RegEx filter and break everything,
             # so we check for that case and split on "/" (if there is one, if not it's a list of one word)
-            for inner_word in word_list:
-                if re.search(re_V, inner_word):  # check if the word is a V-grade
-                    print(inner_word)
-                    print(v_to_font(inner_word))
-                elif re.search(re_YDS, inner_word):  # check if the word is a YDS grade
-                    print(inner_word)
-                    print(YDS_to_french(inner_word))
+            for word in word_list:
+                if re.search(re_V, word):  # check if the word is a V-grade
+                    grade_old = re.sub(r'[^a-zA-Z0-9]', '', word).upper()
+                    grade_new = v_to_font(grade_old)
+                    print(build_comment(grade_old, grade_new))
+                elif re.search(re_YDS, word):  # check if the word is a YDS grade
+                    grade_old = re.sub(r"^\W+|\W+$", "", word).lower()
+                    grade_new = YDS_to_french(grade_old)
+                    print(build_comment(grade_old, grade_new))
+
