@@ -70,6 +70,10 @@ def v_to_font(grade):
         converted_grade = "9a+ or 9b"
     elif grade == "v19":
         converted_grade = "9b or 9b+"
+
+    else:
+        return "No conversion found (something went wrong). calling for /u/PM_ME_YOUR_PROFANITY"
+
     return converted_grade
 
 
@@ -79,7 +83,74 @@ def YDS_to_french(grade):
     :param grade: String
     :return converted_grade:
     """
-    pass
+
+    grade = re.sub(r"^\W+|\W+$", "", grade)
+    grade = grade.lower()
+
+    if grade == "5.4":
+        converted_grade = "4a"
+    elif grade == "5.5":
+        converted_grade = "4b"
+    elif grade == "5.6":
+        converted_grade = "4c"
+    elif grade == "5.7":
+        converted_grade = "5a"
+    elif grade == "5.8":
+        converted_grade = "5b"
+    elif grade == "5.9":
+        converted_grade = "5c"
+    elif grade == "5.10a":
+        converted_grade = "6a"
+    elif grade == "5.10b":
+        converted_grade = "6a+"
+    elif grade == "5.10c":
+        converted_grade = "6a+"
+    elif grade == "5.10d":
+        converted_grade = "6b"
+    elif grade == "5.11a":
+        converted_grade = "6b+"
+    elif grade == "5.11b":
+        converted_grade = "6c"
+    elif grade == "5.11c":
+        converted_grade = "6c+"
+    elif grade == "5.11d":
+        converted_grade = "7a"
+    elif grade == "5.12a":
+        converted_grade = "7a+"
+    elif grade == "5.12b":
+        converted_grade = "7b"
+    elif grade == "5.12c":
+        converted_grade = "7b+"
+    elif grade == "5.12d":
+        converted_grade = "7c"
+    elif grade == "5.13a":
+        converted_grade = "7c+"
+    elif grade == "5.13b":
+        converted_grade = "8a"
+    elif grade == "5.13c":
+        converted_grade = "8a+"
+    elif grade == "5.13d":
+        converted_grade = "8b"
+    elif grade == "5.14a":
+        converted_grade = "8b+"
+    elif grade == "5.14b":
+        converted_grade = "8c"
+    elif grade == "5.14c":
+        converted_grade = "8c+"
+    elif grade == "5.14d":
+        converted_grade = "9a"
+    elif grade == "5.15a":
+        converted_grade = "9a+"
+    elif grade == "5.15b":
+        converted_grade = "9b"
+    elif grade == "5.15c":
+        converted_grade = "9b+"
+    elif grade == "5.15d":
+        converted_grade = "9c"
+
+    else:
+        return "No conversion found (something went wrong). Calling for /u/PM_ME_YOUR_PROFANITY"
+
     return converted_grade
 
 
