@@ -15,8 +15,8 @@ target_sub = "climbing+bouldering+climbharder"
 subreddit = reddit.subreddit(target_sub)
 
 # RegEx
-re_V = r"^[V,v]([1][0-9]|[0-9])\b"
-re_YDS = r"^5.([4-9][^a-z]|1[0-5][a-d]?[^e-z])"  # untested
+re_V = r"^[V,v]([1][0-9]|[0-9])\b"  # seems to work
+re_YDS = r"^5.([4-9][^a-z]|1[0-5][a-d]?[^e-z])"  # seems to work
 
 
 def v_to_font(grade):
@@ -161,7 +161,13 @@ for comment in subreddit.stream.comments():
     # we don't want to convert comments we or MountainProjectBot made
     if comment.author != "MountainProjectBot" and comment.author != "climb-grade-bot":
         for word in comment.body.split():
-            if re.search(re_V, word):  # check if the word is a V-grade
-                v_to_font(word)
-            elif re.search(re_YDS, word):  # check if the word is a YDS grade
-                YDS_to_french(word)
+            word_list = word.split("/")  # sometimes people will write grade1/grade2
+            # this would be passed as one word and get through the RegEx filter and break everything,
+            # so we check for that case and split on "/" (if there is one, if not it's a list of one word)
+            for inner_word in word_list:
+                if re.search(re_V, inner_word):  # check if the word is a V-grade
+                    print(inner_word)
+                    print(v_to_font(inner_word))
+                elif re.search(re_YDS, inner_word):  # check if the word is a YDS grade
+                    print(inner_word)
+                    print(YDS_to_french(inner_word))
