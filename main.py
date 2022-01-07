@@ -15,8 +15,8 @@ target_sub = "climbing+bouldering+climbharder"
 subreddit = reddit.subreddit(target_sub)
 
 # RegEx
-re_V = r"^[V,v]([1][0-9]|[0-9])\b"  # seems to work
-re_YDS = r"^5.([4-9][^a-z]|1[0-5][a-d]?[^e-z])"  # seems to work
+re_V = re.compile(r"^[V,v]([1][0-9]|[0-9])\b")  # seems to work
+re_YDS = re.compile(r"^5.([4-9][^a-z]|1[0-5][a-d]?[^e-z])")  # seems to work
 
 
 def v_to_font(grade):
@@ -25,6 +25,8 @@ def v_to_font(grade):
     :param grade: String
     :return converted_grade:
     """
+
+    grade = grade.upper()
 
     if grade == "V0":
         converted_grade = "4 or 4+"
@@ -79,6 +81,8 @@ def YDS_to_french(grade):
     :param grade: String
     :return converted_grade:
     """
+
+    grade = grade.lower()
 
     if grade == "5.4":
         converted_grade = "4a"
@@ -147,13 +151,9 @@ def YDS_to_french(grade):
     return converted_grade
 
 
-def build_comment(grade, converted_grade):
-    return f"A **{grade}** is a(n) **{converted_grade}**.\n\n"
-
-
 # for submission in subreddit.stream.submissions():
 #     print(submission.title)
-
+"""
 for comment in subreddit.stream.comments():
     # we don't want to convert comments we or MountainProjectBot made
     if comment.author != "MountainProjectBot" and comment.author != "climb-grade-bot":
@@ -170,4 +170,15 @@ for comment in subreddit.stream.comments():
                     grade_old = re.sub(r"^\W+|\W+$", "", word).lower()
                     grade_new = YDS_to_french(grade_old)
                     print(build_comment(grade_old, grade_new))
+"""
 
+for comment in subreddit.stream.comments():
+    if comment.author != "MountainProjectBot" and comment.author != "climb-grade-bot":
+        V_grade_list = [word for word in re.split("[, \-!?:/]+", comment.body) if re_V.search(word)]
+        YDS_grade_list = [word for word in re.split("[, \-!?:/]+", comment.body) if re_YDS.search(word)]
+        reply = '\n\n'.join(f'A {grade} is a(n) {v_to_font(grade)}.'
+                            for grade in V_grade_list)
+        reply += '\n\n'.join(f'A {grade} is a(n) {YDS_to_french(grade)}.'
+                             for grade in YDS_grade_list)
+        if reply:
+            print(reply)
