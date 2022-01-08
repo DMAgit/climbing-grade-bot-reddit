@@ -19,9 +19,10 @@ re_V = re.compile(r"^[V,v]([1][0-9]|[0-9])\b")  # seems to work
 re_YDS = re.compile(r"^5.([4-9][^a-z]|1[0-5][a-d]?[^e-z])")  # seems to work
 
 
-def v_to_font(grade):
+def convert(grade):
     """
-    Convert from V-scale grade to Font grade
+    Convert from V-scale grade to Font grade or
+    YDS to French
     :param grade: String
     :return converted_grade:
     """
@@ -69,22 +70,7 @@ def v_to_font(grade):
     elif grade == "V19":
         converted_grade = "9b or 9b+"
 
-    else:
-        return "No conversion found (something went wrong). calling for /u/PM_ME_YOUR_PROFANITY"
-
-    return converted_grade
-
-
-def YDS_to_french(grade):
-    """
-    Convert from YDS grade to French sport climbing grade
-    :param grade: String
-    :return converted_grade:
-    """
-
-    grade = grade.lower()
-
-    if grade == "5.4":
+    elif grade == "5.4":
         converted_grade = "4a"
     elif grade == "5.5":
         converted_grade = "4b"
@@ -96,89 +82,69 @@ def YDS_to_french(grade):
         converted_grade = "5b"
     elif grade == "5.9":
         converted_grade = "5c"
-    elif grade == "5.10a":
+    elif grade == "5.10A":
         converted_grade = "6a"
-    elif grade == "5.10b":
+    elif grade == "5.10B":
         converted_grade = "6a+"
-    elif grade == "5.10c":
+    elif grade == "5.10C":
         converted_grade = "6a+"
-    elif grade == "5.10d":
+    elif grade == "5.10D":
         converted_grade = "6b"
-    elif grade == "5.11a":
+    elif grade == "5.11A":
         converted_grade = "6b+"
-    elif grade == "5.11b":
+    elif grade == "5.11B":
         converted_grade = "6c"
-    elif grade == "5.11c":
+    elif grade == "5.11C":
         converted_grade = "6c+"
-    elif grade == "5.11d":
+    elif grade == "5.11D":
         converted_grade = "7a"
-    elif grade == "5.12a":
+    elif grade == "5.12A":
         converted_grade = "7a+"
-    elif grade == "5.12b":
+    elif grade == "5.12B":
         converted_grade = "7b"
-    elif grade == "5.12c":
+    elif grade == "5.12C":
         converted_grade = "7b+"
-    elif grade == "5.12d":
+    elif grade == "5.12D":
         converted_grade = "7c"
-    elif grade == "5.13a":
+    elif grade == "5.13A":
         converted_grade = "7c+"
-    elif grade == "5.13b":
+    elif grade == "5.13B":
         converted_grade = "8a"
-    elif grade == "5.13c":
+    elif grade == "5.13C":
         converted_grade = "8a+"
-    elif grade == "5.13d":
+    elif grade == "5.13D":
         converted_grade = "8b"
-    elif grade == "5.14a":
+    elif grade == "5.14A":
         converted_grade = "8b+"
-    elif grade == "5.14b":
+    elif grade == "5.14B":
         converted_grade = "8c"
-    elif grade == "5.14c":
+    elif grade == "5.14C":
         converted_grade = "8c+"
-    elif grade == "5.14d":
+    elif grade == "5.14D":
         converted_grade = "9a"
-    elif grade == "5.15a":
+    elif grade == "5.15A":
         converted_grade = "9a+"
-    elif grade == "5.15b":
+    elif grade == "5.15B":
         converted_grade = "9b"
-    elif grade == "5.15c":
+    elif grade == "5.15C":
         converted_grade = "9b+"
-    elif grade == "5.15d":
+    elif grade == "5.15D":
         converted_grade = "9c"
 
     else:
-        return "No conversion found (something went wrong). Calling for /u/PM_ME_YOUR_PROFANITY"
+        return "No conversion found (something went wrong). calling for /u/PM_ME_YOUR_PROFANITY"
 
     return converted_grade
 
 
 # for submission in subreddit.stream.submissions():
 #     print(submission.title)
-"""
-for comment in subreddit.stream.comments():
-    # we don't want to convert comments we or MountainProjectBot made
-    if comment.author != "MountainProjectBot" and comment.author != "climb-grade-bot":
-        for string in comment.body.split():
-            word_list = string.split("/")  # sometimes people will write grade1/grade2
-            # this would be passed as one word and get through the RegEx filter and break everything,
-            # so we check for that case and split on "/" (if there is one, if not it's a list of one word)
-            for word in word_list:
-                if re.search(re_V, word):  # check if the word is a V-grade
-                    grade_old = re.sub(r'[^a-zA-Z0-9]', '', word).upper()
-                    grade_new = v_to_font(grade_old)
-                    print(build_comment(grade_old, grade_new))
-                elif re.search(re_YDS, word):  # check if the word is a YDS grade
-                    grade_old = re.sub(r"^\W+|\W+$", "", word).lower()
-                    grade_new = YDS_to_french(grade_old)
-                    print(build_comment(grade_old, grade_new))
-"""
 
 for comment in subreddit.stream.comments():
     if comment.author != "MountainProjectBot" and comment.author != "climb-grade-bot":
-        V_grade_list = [word for word in re.split("[, \-!?:/]+", comment.body) if re_V.search(word)]
-        YDS_grade_list = [word for word in re.split("[, \-!?:/]+", comment.body) if re_YDS.search(word)]
-        reply = '\n\n'.join(f'A {grade} is a(n) {v_to_font(grade)}.'
-                            for grade in V_grade_list)
-        reply += '\n\n'.join(f'A {grade} is a(n) {YDS_to_french(grade)}.'
-                             for grade in YDS_grade_list)
+        grade_list = [word for word in re.split("[, \-!?:/]+", comment.body)
+                      if re_V.search(word) or re_YDS.search(word)]
+        reply = '\n\n'.join(f'A {grade} is a(n) {convert(grade)}.'
+                            for grade in grade_list)
         if reply:
             print(reply)
