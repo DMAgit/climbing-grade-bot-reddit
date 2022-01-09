@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import praw
 import config  # private info for the reddit API
 import re
@@ -137,8 +139,18 @@ def convert(grade):
     return converted_grade
 
 
-# for submission in subreddit.stream.submissions():
-#     print(submission.title)
+# go over all posts
+    # check the comments for MountainProjectBot and climb-grade-bot
+        # check the title
+            # convert
+                # post comment
+        # check all the other comments [done]
+            # convert [done]
+                # post reply
+
+for submission in subreddit.stream.submissions():
+    for comment in submission.comments():
+        
 
 for comment in subreddit.stream.comments():
     if comment.author != "MountainProjectBot" and comment.author != "climb-grade-bot":
