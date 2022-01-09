@@ -150,12 +150,12 @@ def convert(grade):
 
 for submission in subreddit.stream.submissions():
     for comment in submission.comments():
-        
+        # TODO: check the ROOT comments for MountainProjectBot and climb-grade-bot. If neither has replied AND there is
+        #       a keyword in the title, then convert it and reply in a root comment.
 
-for comment in subreddit.stream.comments():
-    if comment.author != "MountainProjectBot" and comment.author != "climb-grade-bot":
-        grade_list = [word for word in re.split("[, \-!?:/]+", comment.body)
-                      if re_V.search(word) or re_YDS.search(word)]
-        reply = '\n\n'.join(f'A {grade} is a(n) {convert(grade)}.' for grade in grade_list)
-        if reply:
-            print(reply)
+        if comment.author != "MountainProjectBot" and comment.author != "climb-grade-bot":
+            grade_list = [word for word in re.split("[, \-!?:/]+", comment.body)
+                          if re_V.search(word) or re_YDS.search(word)]
+            reply = '\n\n'.join(f'A {grade} is a(n) {convert(grade)}.' for grade in grade_list)
+            if reply:
+                print(reply)
